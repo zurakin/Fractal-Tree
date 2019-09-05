@@ -5,17 +5,28 @@ import numpy as np
 import branch
 import constantes
 
+changed = False
+
+
+def nothing(x):
+    global changed
+    changed = True
+
 ##create black background
-img = np.zeros((constantes.height,constantes.width) ,dtype = np.uint8)
-
-
 def execute():
-    branches = [branch.Branch(coords = (int(constantes.width/2),int(constantes.height)), length = constantes.length, angle = pi/2 ,thikness = constantes.thikness)]
+    cv2.destroyAllWindows()
+    cv2.namedWindow('tree')
+    img = np.zeros((constantes.height,constantes.width) ,dtype = np.uint8)
+    cv2.createTrackbar('Curviness','tree',0,100,nothing)
+    branches = [branch.Branch(coords = (
+    int(constantes.width/2),int(constantes.height)),
+    length = constantes.length, angle = pi/2 ,thikness = constantes.thikness)]
     new_branches = []
     tscale = constantes.tscale
     while True:
+        global changed
         for br in branches:
-            if br.length <1:
+            if br.length <5:
                 return 'branch became too small'
             br.draw(img)
             #branch to the right
@@ -32,10 +43,19 @@ def execute():
             cv2.imshow('tree',img)
             key = cv2.waitKey(tscale)
             if key == 27:
-                return 'user pressed esc button'
+                return 'User pressed ESC button'
+            if changed:
+                cur = cv2.getTrackbarPos('Curviness','tree')
+                constantes.added_angle = cur * pi /50
+                changed = False
+            if key == 13:
+                execute()
+                return 'User pressed ESC button'
+
         if tscale >2:
             tscale = int(tscale/2)
         branches = new_branches.copy()
         new_branches = []
 
 print(execute())
+cv2.destroyAllWindows()
