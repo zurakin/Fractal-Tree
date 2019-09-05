@@ -46,7 +46,7 @@ def execute():
                 return 'User pressed ESC button'
             if changed:
                 cur = cv2.getTrackbarPos('Curviness','tree')
-                constantes.added_angle = cur * pi /50
+                constantes.added_angle = cur * pi / 200
                 changed = False
             if key == 13:
                 execute()
